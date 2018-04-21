@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secondeal.dao.org.OrderDao" >
+  <resultMap id="BaseResultMap" type="com.secondeal.model.org.Order" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="good_title" property="goodTitle" jdbcType="VARCHAR" />
+    <result column="good_uuid" property="goodUuid" jdbcType="VARCHAR" />
+    <result column="good_discounted" property="goodDiscounted" jdbcType="DOUBLE" />
+    <result column="good_intro" property="goodIntro" jdbcType="VARCHAR" />
+    <result column="buy_uuid" property="buyUuid" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="tableName">
+    org_order
+  </sql>
+  <sql id="field" >
+    id, uuid, good_title, good_uuid, good_discounted, good_intro, buy_uuid, create_time, 
+    update_time, state
+  </sql>
+  <sql id="values">
+    #{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{goodTitle,jdbcType=VARCHAR},
+      #{goodUuid,jdbcType=VARCHAR}, #{goodDiscounted,jdbcType=DOUBLE}, #{goodIntro,jdbcType=VARCHAR},
+      #{buyUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+      #{state,jdbcType=INTEGER}
+  </sql>
+  <insert id="insert" parameterType="com.secondeal.model.org.Order">
+    <selectKey keyProperty="id" resultType="long">
+      select LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO
+    <include refid="tableName"/>
+    (<include refid="field"/>)
+    VALUES
+    (<include refid="values"/>)
+  </insert>
+  <select id="getByBuyUuid" resultMap="BaseResultMap">
+    SELECT
+    uuid, good_title, good_uuid, good_discounted, good_intro, create_time
+    FROM
+    <include refid="tableName"/>
+    WHERE
+    buy_uuid = #{buy_uuid} AND state = 0
+  </select>
+
+
+  <insert id="insertSelective" parameterType="com.secondeal.model.org.Order" >
+    insert into org_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="goodTitle != null" >
+        good_title,
+      </if>
+      <if test="goodUuid != null" >
+        good_uuid,
+      </if>
+      <if test="goodDiscounted != null" >
+        good_discounted,
+      </if>
+      <if test="goodIntro != null" >
+        good_intro,
+      </if>
+      <if test="buyUuid != null" >
+        buy_uuid,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="goodTitle != null" >
+        #{goodTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="goodUuid != null" >
+        #{goodUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="goodDiscounted != null" >
+        #{goodDiscounted,jdbcType=DOUBLE},
+      </if>
+      <if test="goodIntro != null" >
+        #{goodIntro,jdbcType=VARCHAR},
+      </if>
+      <if test="buyUuid != null" >
+        #{buyUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

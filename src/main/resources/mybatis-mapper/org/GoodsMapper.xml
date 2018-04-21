@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secondeal.dao.org.GoodsDao">
+    <resultMap id="BaseResultMap" type="com.secondeal.model.org.Goods">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="images" property="images" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="discounted" property="discounted" jdbcType="DOUBLE"/>
+        <result column="belong_uuid" property="belongUuid" jdbcType="VARCHAR"/>
+        <result column="belong_name" property="belongName" jdbcType="VARCHAR"/>
+        <result column="buy_uuid" property="buyUuid" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="intro" property="intro" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER"/>
+        <result column="flag" property="flag" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="baseResultMap" type="java.util.Map">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="images" property="images" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="discounted" property="discounted" jdbcType="DOUBLE"/>
+        <result column="belong_name" property="belongName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="qq" property="qq" jdbcType="INTEGER"/>
+        <result column="intro" property="intro" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="tableName">
+        org_goods
+    </sql>
+    <sql id="field">
+        id, uuid, title, tags, images, price, discounted, belong_uuid, belong_name, mobile, intro, state, flag, create_time,
+        update_time, delete_time , is_delete,buy_uuid,qq
+    </sql>
+    <sql id="values">
+        #{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
+        #{tags,jdbcType=VARCHAR}, #{images,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE},
+        #{discounted,jdbcType=DOUBLE}, #{belongUuid,jdbcType=VARCHAR}, #{belongName,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+        #{intro,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{flag,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{deleteTime,jdbcType=TIMESTAMP},#{isDelete,jdbcType=INTEGER},#{buyUuid,jdbcType=VARCHAR},#{qq,jdbcType=INTEGER}
+    </sql>
+    <insert id="insert" parameterType="com.secondeal.model.org.Goods">
+        <selectKey keyProperty="id" resultType="long">
+            select LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO
+        <include refid="tableName"/>
+        (<include refid="field"/>)
+        VALUES
+        (<include refid="values"/>)
+    </insert>
+
+    <select id="getAll" resultMap="baseResultMap">
+        SELECT
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        state = 0 and is_delete = 0 order by create_time desc
+    </select>
+    <select id="getByTime" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        flag = 0 and state = 0 and is_delete = 0 order by create_time desc
+    </select>
+    <select id="getByDis" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        flag = 0 and state = 0 and is_delete = 0
+        <if test="pd == '1'.toString()">
+            order by discounted desc
+        </if>
+        <if test="pd != '1'.toString()">
+            order by discounted asc
+        </if>
+    </select>
+    <select id="getByTag" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        tags = #{tag} and
+        flag = 0 and state = 0 and is_delete = 0 order by create_time desc
+    </select>
+    <select id="getByUuid" resultMap="baseResultMap">
+        SELECT
+        uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time, qq
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        uuid = #{uuid}
+    </select>
+    <select id="getByBelong" resultMap="BaseResultMap">
+        select
+        <include refid="field"/>
+        from
+        <include refid="tableName"/>
+        where
+        belong_uuid = #{belong_uuid} and is_delete = 0
+    </select>
+    <delete id="delete">
+        update
+        <include refid="tableName"/>
+        set
+        is_delete = 1
+        where
+        uuid = #{uuid}
+    </delete>
+    <update id="updateImg">
+        UPDATE
+        <include refid="tableName"/>
+        SET
+        images = #{pd.images}, update_time = NOW()
+        WHERE
+        uuid = #{pd.uuid}
+    </update>
+
+    <select id="getByTimeShare" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        flag = 1 and state = 0 and is_delete = 0 order by create_time desc
+    </select>
+    <select id="getByDiShare" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        flag = 1 and state = 0 and is_delete = 0
+        <if test="pd == '1'.toString()">
+            order by discounted desc
+        </if>
+        <if test="pd != '1'.toString()">
+            order by discounted asc
+        </if>
+    </select>
+    <select id="getByTagShare" resultMap="baseResultMap">
+        select
+        id, uuid, title, tags, images, price, discounted, belong_name, mobile, intro, flag, create_time
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        tags = #{tag} and
+        flag = 1 and state = 0 and is_delete = 0 order by create_time desc
+    </select>
+
+    <select id="findByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="field"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        state = 0 and is_delete = 0
+        order by
+        create_time desc
+    </select>
+</mapper>

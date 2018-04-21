@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.secondeal.dao.account.AccountDao">
+    <resultMap id="BaseResultMap" type="com.secondeal.model.account.Account">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="passwd" property="passwd" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="qq" property="qq" javaType="Integer" />
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="java.util.Map">
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="qq" property="qq" javaType="Integer" />
+    </resultMap>
+    <sql id="tableName">
+        sys_user
+    </sql>
+    <sql id="field">
+        id, uuid, nickname, passwd, email, telephone, phone, create_time, update_time, delete_time, qq
+    </sql>
+    <sql id="values">
+        #{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{deleteTime,jdbcType=TIMESTAMP},
+        #{qq,jdbcType=INTEGER}
+    </sql>
+    <insert id="insert" parameterType="com.secondeal.model.account.Account">
+        <selectKey keyProperty="id" resultType="long">
+            select LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO
+        <include refid="tableName"/>
+        (<include refid="field"/>)
+        VALUES
+        (<include refid="values"/>)
+    </insert>
+    <select id="isExist" parameterType="String" resultType="String">
+        SELECT
+        <include refid="field"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        telephone = #{mobile}
+    </select>
+    <select id="queryAccount" resultMap="BaseResultMap">
+        SELECT
+        <include refid="field"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        telephone = #{name}
+    </select>
+    <select id="getUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="field"/>
+        FROM
+        <include refid="tableName"/>
+    </select>
+    <select id="selectByMobile" resultMap="baseResultMap">
+        SELECT
+        nickname, email, telephone, phone, qq, uuid
+        FROM
+        <include refid="tableName"/>
+        WHERE
+        telephone = #{mobile}
+    </select>
+</mapper>
